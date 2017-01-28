@@ -1,0 +1,81 @@
+---
+# vars file for Dell-Networking.dellos-acl, below gives a sample configuration
+
+dellos_acl:
+  leaf3:
+      - name: ssh-only-mac
+        type: mac
+        description: macacl
+        isextended: true
+        seqlist:
+          - number: 5
+            ispermit: true
+            protocol: tcp
+            source: any
+            destination: any
+            dest_condition: log
+            state: present
+          - number: 6
+            ispermit: false
+            protocol: tcp
+            source: bb:bb:bb:bb:bb:bb aa:aa:aa:aa:aa:aa
+            destination: any
+            dest_condition: log
+            state: present
+        ingress_intf:
+          - name: fortyGigE 1/28
+            state: present
+          - name: fortyGigE 1/27
+            state: present
+        egress_intf:
+          - name: fortyGigE 1/28
+            state: present
+        lineterminal:
+          - line: vty 1
+            state: present
+          - line: vty 2
+            state: absent
+          - line: vty 3
+        state: present
+      - name: ipv6-ssh-only
+        type: ipv6
+        description: ipv6acl
+        seqlist:
+          - number: 10
+            ispermit: true
+            protocol: ipv6
+            source: 2001:4898::/32
+            destination: any
+          - number: 20
+            ispermit: true
+            protocol: tcp
+            source: any
+            src_condition: ack
+            destination: 2404:f801::/32
+          - number: 30
+            ispermit: true
+            protocol: tcp
+            source: any
+            destination: 2a01:110::/31
+            dest_condition: ack
+          - number: 40
+            ispermit: true
+            protocol: tcp
+            source: any
+            destination: any
+        ingress_intf:
+          - name: fortyGigE 1/26
+            state: present
+          - name: fortyGigE 1/27
+            state: present
+        egress_intf:
+          - name: fortyGigE 1/26
+            state: present
+        lineterminal:
+          - line: vty 0
+            state: absent
+          - line: vty 1
+          - line: vty 2
+          - line: vty 3
+        state: present
+
