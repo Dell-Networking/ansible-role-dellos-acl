@@ -61,7 +61,7 @@ dellos_acl:
 #####################################}
 {% if (dellos_acl is defined and dellos_acl) and (hostname in dellos_acl) %}
 {% set acl_vars = dellos_acl[hostname] %}
-
+{% if acl_vars %}
   {% for val in acl_vars %}
     {% if val.name is defined and val.name %}
       {% if val.state is defined and val.state == "absent" %}
@@ -232,4 +232,5 @@ interface {{ intf.name }}
       {% endif %}
     {% endif %}
   {% endfor %}
+{% endif %}
 {% endif %}
