@@ -104,7 +104,7 @@ Sample ``host_vars/leaf1``:
       
 Sample ``vars/main.yaml``:
 
-	dellos_system:
+	dellos_acl:
       leaf1:
         - type: ipv4
           name: ssh-only
