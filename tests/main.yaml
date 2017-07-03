@@ -1,33 +1,39 @@
 ---
 # vars file for Dell-Networking.dellos-acl, below gives a sample configuration
 
+# Sample variables for dellos9 device
+
 dellos_acl:
-  leaf3:
       - name: ssh-only-mac
         type: mac
         description: macacl
-        isextended: true
-        seqlist:
+        extended: true
+        remark:
+          - number: 1
+            description: mac
+            state: present
+        entries:
           - number: 5
-            ispermit: true
+            permit: true
             protocol: tcp
             source: any
             destination: any
-            dest_condition: log
+            dest_condition: eq 2
+            other_options: count
             state: present
           - number: 6
-            ispermit: false
+            permit: false
             protocol: tcp
-            source: bb:bb:bb:bb:bb:bb aa:aa:aa:aa:aa:aa
+            source: bb:bb:bb:bb:bb:bb ff:ff:ff:ff:ff:ff
             destination: any
             dest_condition: log
             state: present
-        ingress_intf:
+        stage_ingress:
           - name: fortyGigE 1/28
             state: present
           - name: fortyGigE 1/27
             state: present
-        egress_intf:
+        stage_egress:
           - name: fortyGigE 1/28
             state: present
         lineterminal:
@@ -40,35 +46,38 @@ dellos_acl:
       - name: ipv6-ssh-only
         type: ipv6
         description: ipv6acl
-        seqlist:
+        remark:
+          - number: 1
+            description: ipv6
+        entries:
           - number: 10
-            ispermit: true
+            permit: true
             protocol: ipv6
             source: 2001:4898::/32
             destination: any
           - number: 20
-            ispermit: true
+            permit: true
             protocol: tcp
             source: any
-            src_condition: ack
+            src_condition: eq 2
             destination: 2404:f801::/32
           - number: 30
-            ispermit: true
+            permit: true
             protocol: tcp
             source: any
             destination: 2a01:110::/31
             dest_condition: ack
           - number: 40
-            ispermit: true
+            permit: true
             protocol: tcp
             source: any
             destination: any
-        ingress_intf:
+        stage_ingress:
           - name: fortyGigE 1/26
             state: present
           - name: fortyGigE 1/27
             state: present
-        egress_intf:
+        stage_egress:
           - name: fortyGigE 1/26
             state: present
         lineterminal:
