@@ -42,6 +42,7 @@ dellos_acl:
      state: present
 #####################################}
 {% if dellos_acl is defined and dellos_acl %}
+{% set acl_dict = {} %}
   {% for val in dellos_acl %}
     {% if val.name is defined and val.name %}
       {% if val.state is defined and val.state == "absent" %}
@@ -107,31 +108,39 @@ exit
               {% for intf in val.stage_ingress %}
                 {% if intf.state is defined and intf.state == "absent" %}
                   {% if intf.name is defined and intf.name %}
-interface {{ intf.name }}
+{% set key = intf.name  %}
+{% set key_val_list = acl_dict.setdefault(key, []) %}
                     {% if val.type is defined and val.type == "mac" %}
-no mac access-group {{ val.name }} in
+{% set value = ("no mac access-group " +  val.name + " " + "in") %}
+{% set acl_val = acl_dict[key].append(value) %}
                     {% elif val.type is defined and val.type == "ipv4" %}
-no ip access-group {{ val.name }} in
+{% set value = ("no ip access-group " +  val.name + " " + "in") %}
+{% set acl_val = acl_dict[key].append(value) %}
                     {% endif %}
-exit
                   {% endif %}
                 {% else %}
                   {% if intf.name is defined and intf.name %}
-interface {{ intf.name }}
+{% set key = intf.name  %}
+{% set key_val_list = acl_dict.setdefault(key, []) %}
                     {% if val.type is defined and val.type == "mac" %}
                       {% if intf.seq_number is defined and intf.seq_number %}
-mac access-group {{ val.name }} in {{ intf.seq_number }}
+{% set value1 =  intf.seq_number|string %}
+{% set value = ("mac access-group " +  val.name + " " + "in " +  value1) %}
+{% set acl_val = acl_dict[key].append(value) %}
                       {% else %}
-mac access-group {{ val.name }} in
+{% set value = ("mac access-group " +  val.name + " " + "in ") %}
+{% set acl_val = acl_dict[key].append(value) %}
                       {% endif %}
                     {% elif val.type is defined and val.type == "ipv4" %}
                       {% if intf.seq_number is defined and intf.seq_number %}
-ip access-group {{ val.name }} in {{ intf.seq_number }}
+{% set value1 =  intf.seq_number|string %}
+{% set value = ("ip access-group " +  val.name + " " + "in " +  value1) %}
+{% set acl_val = acl_dict[key].append(value) %}
                       {% else %}
-ip access-group {{ val.name }} in
+{% set value = ("ip access-group " +  val.name + " " + "in ") %}
+{% set acl_val = acl_dict[key].append(value) %}
                       {% endif %}
                     {% endif %}
-exit
                   {% endif %}
                 {% endif %}
               {% endfor %}
@@ -140,31 +149,39 @@ exit
               {% for intf in val.stage_egress %}
                 {% if intf.state is defined and intf.state == "absent" %}
                   {% if intf.name is defined and intf.name %}
-interface {{ intf.name }}
+{% set key = intf.name  %}
+{% set key_val_list = acl_dict.setdefault(key, []) %}
                     {% if val.type is defined and val.type == "mac" %}
-no mac access-group {{ val.name }} out
+{% set value = ("no mac access-group " +  val.name + " " + "out") %}
+{% set acl_val = acl_dict[key].append(value) %}
                     {% elif val.type is defined and val.type == "ipv4" %}
-no ip access-group {{ val.name }} out
+{% set value = ("no ip access-group " +  val.name + " " + "out") %}
+{% set acl_val = acl_dict[key].append(value) %}
                     {% endif %}
-exit
                   {% endif %}
                 {% else %}
                   {% if intf.name is defined and intf.name %}
-interface {{ intf.name }}
+{% set key = intf.name  %}
+{% set key_val_list = acl_dict.setdefault(key, []) %}
                     {% if val.type is defined and val.type == "mac" %}
                       {% if intf.seq_number is defined and intf.seq_number %}
-mac access-group {{ val.name }} out {{ intf.seq_number }}
+{% set value1 =  intf.seq_number|string %}
+{% set value = ("mac access-group " +  val.name + " " + "out " +  value1) %}
+{% set acl_val = acl_dict[key].append(value) %}
                       {% else %}
-mac access-group {{ val.name }} out
+{% set value = ("mac access-group " +  val.name + " " + "out ") %}
+{% set acl_val = acl_dict[key].append(value) %}
                       {% endif %}
                     {% elif val.type is defined and val.type == "ipv4" %}
                       {% if intf.seq_number is defined and intf.seq_number %}
-ip access-group {{ val.name }} out {{ intf.seq_number }}
+{% set value1 =  intf.seq_number|string %}
+{% set value = ("ip access-group " +  val.name + " " + "out " +  value1) %}
+{% set acl_val = acl_dict[key].append(value) %}
                       {% else %}
-ip access-group {{ val.name }} out
+{% set value = ("ip access-group " +  val.name + " " + "out ") %}
+{% set acl_val = acl_dict[key].append(value) %}
                       {% endif %}
                     {% endif %}
-exit
                   {% endif %}
                 {% endif %}
               {% endfor %}
@@ -173,4 +190,11 @@ exit
       {% endif %}
     {% endif %}  
   {% endfor %}
+ {% for intf_name, acl_list in acl_dict.iteritems() %}
+interface {{ intf_name }}
+   {% for acl in acl_list %}
+{{ acl }}
+   {% endfor %}
+exit
+ {% endfor %}
 {% endif %}
