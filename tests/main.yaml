@@ -1,8 +1,6 @@
 ---
 # vars file for Dell-Networking.dellos-acl, below gives a sample configuration
-
 # Sample variables for dellos9 device
-
 dellos_acl:
       - name: ssh-only-mac
         type: mac
@@ -89,7 +87,6 @@ dellos_acl:
         state: present
 
 # Sample variables for dellos10 device
-
 dellos_acl:
    - name: ssh
      type: ipv4
@@ -121,8 +118,6 @@ dellos_acl:
      state: present
 
 # Sample variables for dellos6 device
-
-
 dellos_acl:
    - name: macl-implicit
      type: mac
