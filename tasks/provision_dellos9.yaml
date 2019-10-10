@@ -11,6 +11,6 @@
  - name: "Provisioning ACL configuration for dellos9"
    dellos9_config:
       src: dellos9_acl.j2
-    when: (ansible_network_os is defined and ansible_network_os == "dellos9")
+   when: (ansible_network_os is defined and ansible_network_os == "dellos9")
 #   notify: save config os9
    register: output
