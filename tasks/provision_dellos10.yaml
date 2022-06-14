@@ -8,9 +8,28 @@
 #   notify: save config os10
    register: generate_output
 
+ - name: "Generating ACL configuration for dellos10"
+   template:
+      src: dellos10_acl_interfaces.j2
+      dest: "{{ build_dir }}/acl10_interfaces_{{ hostname }}.conf.part"
+   when: (ansible_network_os is defined and ansible_network_os == "dellos10") and ((dellos_cfg_generate | default('False')) | bool)
+#   notify: save config os10
+   register: generate_output
+
  - name: "Provisioning ACL configuration for dellos10"
    dellos10_config:
       src: dellos10_acl.j2
+   when: (ansible_network_os is defined and ansible_network_os == "dellos10")
+#   notify: save config os10
+   register: output
+
+ - name: Wait for ACLs to be programmed before adding ACLs to interfaces
+   wait_for:
+     timeout: 10
+
+ - name: "Provisioning ACL interface configuration for dellos10"
+   dellos10_config:
+      src: dellos10_acl_interfaces.j2
    when: (ansible_network_os is defined and ansible_network_os == "dellos10")
 #   notify: save config os10
    register: output
